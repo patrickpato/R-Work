@@ -1,0 +1,57 @@
+---
+title: "Esoph Data Analysis"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+# LOADING THE DATA AND VISUALIZING IT
+
+```{r}
+library(faraway)
+library(stats)
+```
+```{r}
+data(esoph)
+summary(esoph)
+str(esoph)
+```
+#CREATING A GENERALIZED LINEAR MODEL
+```{r}
+linear_model <- glm(cbind(ncases, ncontrols) ~ agegp + unclass(tobgp)
+                                         + unclass(alcgp),
+              data = esoph, family = binomial())
+summary(linear_model)
+```
+#Checking for outliers in the model
+```{r}
+#Checking for outliers
+residuals(linear_model,type = "response") 
+```
+#Calculating the confidence interval
+```{r}
+confint(linear_model)
+```
+The confidence intervals for all the attributes in the data are shown in the table above
+The probability that a 25 year old who does not smoke or drink will get espophegal cancer is significantly low (close to zero).
+#PREDICTING THE PROBABILITY OF A WOMAN HAVING CANCER
+```{r}
+agegp <- c("45-54")
+agegp <- as.factor(agegp)
+alcgp <- c("40-79")
+alcgp <- as.factor(alcgp)
+tobgp <- c(10-19)
+tobgp <= as.numeric(tobgp)
+woman_data <- data.frame(agegp, alcgp, tobgp)
+prob <- predict(linear_model, woman_data)
+prob
+```
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
